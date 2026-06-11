@@ -47,6 +47,8 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
 @keyframes btnShine{0%{left:-70%}60%,100%{left:130%}}
 @keyframes twinkle{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.5)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px) scale(.9)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}to{opacity:0;transform:translateX(-50%) translateY(-10px) scale(.95)}}
 @keyframes impactFlash{0%{transform:scale(0);opacity:1}100%{transform:scale(3.5);opacity:0}}
 @keyframes timerPanic{0%,100%{text-shadow:0 0 16px rgba(255,45,120,.6)}50%{text-shadow:0 0 30px #FF2D78,0 0 50px rgba(255,45,120,.5)}}
 @keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -2523,7 +2525,7 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
     <div class="jlb-info">
       <div class="jlb-num">LOTE #047 / 68</div>
       <div class="jlb-name">Charizard Holo 1ª Ed.</div>
-      <div class="jlb-price">R$18.500</div>
+      <div class="jlb-price" id="currentPriceMob">R$18.500</div>
     </div>
     <div style="text-align:right;">
       <div class="jlb-more" onclick="go('s4');setNav(2)">Ver fila →</div>
@@ -2543,10 +2545,10 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
   <!-- ── BARRA DE ENTRADA ── -->
   <div class="jl-input-bar">
     <div class="jl-bids-row">
-      <button class="jl-bq" onclick="impact()">+R$500</button>
-      <button class="jl-bq" onclick="impact()">+R$1k</button>
-      <button class="jl-bq" onclick="impact()">+R$2k</button>
-      <button class="jl-main-bid" onclick="impact()">⚔️ DAR LANCE</button>
+      <button class="jl-bq" id="bq500m" onclick="selectBid(500,this)">+R$500</button>
+      <button class="jl-bq" id="bq1km" onclick="selectBid(1000,this)">+R$1k</button>
+      <button class="jl-bq" id="bq2km" onclick="selectBid(2000,this)">+R$2k</button>
+      <button class="jl-main-bid" id="mainBidBtn" onclick="darLance()">⚔️ DAR LANCE — +R$500</button>
     </div>
     <div class="jl-type-row">
       <div class="jl-user-av">⚡</div>
@@ -2580,7 +2582,7 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
         <div style="flex:1;">
           <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">LOTE #047 / 68 · PSA 9 MINT</div>
           <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;">Charizard Holo 1ª Ed.</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1;">R$18.500</div>
+          <div id="currentPriceDesk" style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1;">R$18.500</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:10px;color:var(--muted);">⏱ Tempo</div>
@@ -2593,7 +2595,7 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
     <!-- Líder atual -->
     <div style="padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(255,208,96,.04);flex-shrink:0;display:flex;align-items:center;gap:10px;">
       <span style="font-size:16px;">👑</span>
-      <div style="flex:1;font-size:12px;color:var(--muted);"><span style="color:var(--gold);font-weight:700;">coletor_SP</span> está na liderança</div>
+      <div id="leaderText" style="flex:1;font-size:12px;color:var(--muted);"><span style="color:var(--gold);font-weight:700;">coletor_SP</span> está na liderança</div>
       <div style="font-size:11px;color:var(--muted);">mín: +R$500</div>
     </div>
 
@@ -2611,12 +2613,12 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
     <!-- Bid panel -->
     <div style="padding:16px 20px;border-top:1px solid var(--border);flex-shrink:0;">
       <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <button class="jl-bq" style="flex:1;padding:11px 0;font-size:13px;" onclick="impact()">+R$500</button>
-        <button class="jl-bq" style="flex:1;padding:11px 0;font-size:13px;" onclick="impact()">+R$1k</button>
-        <button class="jl-bq" style="flex:1;padding:11px 0;font-size:13px;" onclick="impact()">+R$2k</button>
-        <button class="jl-bq" style="flex:1;padding:11px 0;font-size:13px;" onclick="impact()">+R$5k</button>
+        <button class="jl-bq" id="bq500d" style="flex:1;padding:11px 0;font-size:13px;" onclick="selectBid(500,this)">+R$500</button>
+        <button class="jl-bq" id="bq1kd" style="flex:1;padding:11px 0;font-size:13px;" onclick="selectBid(1000,this)">+R$1k</button>
+        <button class="jl-bq" id="bq2kd" style="flex:1;padding:11px 0;font-size:13px;" onclick="selectBid(2000,this)">+R$2k</button>
+        <button class="jl-bq" id="bq5kd" style="flex:1;padding:11px 0;font-size:13px;" onclick="selectBid(5000,this)">+R$5k</button>
       </div>
-      <button class="btn-grad btn-pink" style="width:100%;padding:15px;font-size:16px;border-radius:12px;" onclick="impact()">⚔️ DAR LANCE AGORA</button>
+      <button id="mainBidBtnDesk" class="btn-grad btn-pink" style="width:100%;padding:15px;font-size:16px;border-radius:12px;" onclick="darLance()">⚔️ DAR LANCE — +R$500</button>
       <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
         <div class="jl-user-av" style="width:34px;height:34px;font-size:14px;">⚡</div>
         <div class="jl-msg-inp" style="flex:1;cursor:text;">Digite uma mensagem…</div>
@@ -2659,7 +2661,7 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
       <div style="font-size:52px;margin-bottom:16px;animation:cardFloat 2s ease-in-out infinite;">🔥</div>
       <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px;">Charizard Holo 1ª Ed.</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Lote #047 · PSA 9 MINT</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:44px;font-weight:700;color:var(--gold);text-shadow:0 0 20px rgba(255,208,96,.5);">R$18.500</div>
+      <div id="currentPriceCam" style="font-family:'Rajdhani',sans-serif;font-size:44px;font-weight:700;color:var(--gold);text-shadow:0 0 20px rgba(255,208,96,.5);">R$18.500</div>
       <div style="font-size:11px;color:var(--muted);margin:4px 0 16px;">👑 coletor_SP · mínimo +R$500</div>
       <button class="btn-grad btn-pink" style="padding:13px 32px;font-size:15px;" onclick="go('s3');setNav(1)">⚡ DAR LANCE AGORA</button>
     </div>
@@ -3646,21 +3648,32 @@ function mkTimer(id,startSecs,panicAt){
   var el=document.getElementById(id);
   if(!el) return;
   var s=startSecs;
-  return setInterval(function(){
+  var ref = {
+    addSecs: function(n){
+      s = Math.min(s + n, 599);
+      if(el){
+        el.style.color = 'var(--cyan)';
+        el.style.animation = '';
+        el.style.transition = 'color .3s';
+      }
+    }
+  };
+  ref.interval = setInterval(function(){
     if(s>0) s--;
     var m=String(Math.floor(s/60)).padStart(2,'0');
     var sec=String(s%60).padStart(2,'0');
-    el.textContent=m+':'+sec;
-    if(s<panicAt){
+    if(el) el.textContent=m+':'+sec;
+    if(s<panicAt && el){
       el.style.color='#ff0050';
       el.style.animation='timerPanic .5s ease-in-out infinite';
     }
   },1000);
+  return ref;
 }
-mkTimer('liveT',167,30);
-mkTimer('liveTDesk',167,30);
-mkTimer('heroT',167,30);
-mkTimer('camT',167,30);
+bidTimerRefs['liveT']    = mkTimer('liveT',167,30);
+bidTimerRefs['liveTDesk']= mkTimer('liveTDesk',167,30);
+bidTimerRefs['heroT']    = mkTimer('heroT',167,30);
+bidTimerRefs['camT']     = mkTimer('camT',167,30);
 
 // ── criar live: seletor de modo ──
 function selectMode(mode){
@@ -4632,15 +4645,120 @@ function sendQuick(txt){
   addTo('liveFeedDesk',20);
 }
 
-// ── impact flash ──
+// ── Bid state ──
+var currentBid = 18500;
+var bidCount = 23;
+var selectedBidIncrement = 500;
+var userLeading = false;
+var bidTimerRefs = {};
+
+function fmtBRL(n){
+  return 'R$' + n.toLocaleString('pt-BR');
+}
+
+function selectBid(amount, btn){
+  selectedBidIncrement = amount;
+  // Update highlight on all quick bid buttons
+  ['bq500m','bq1km','bq2km','bq500d','bq1kd','bq2kd','bq5kd'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.style.background=''; el.style.color=''; el.style.borderColor=''; }
+  });
+  if(btn){
+    btn.style.background = 'var(--pink)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--pink)';
+  }
+  var label = amount >= 1000 ? '+R$' + (amount/1000) + 'k' : '+R$' + amount;
+  var mb = document.getElementById('mainBidBtn');
+  var md = document.getElementById('mainBidBtnDesk');
+  if(mb) mb.textContent = '⚔️ DAR LANCE — ' + label;
+  if(md) md.textContent = '⚔️ DAR LANCE — ' + label;
+}
+
+function darLance(){
+  var novoBid = currentBid + selectedBidIncrement;
+  currentBid = novoBid;
+  bidCount++;
+  userLeading = true;
+
+  var fmt = fmtBRL(novoBid);
+
+  // Update all price displays
+  ['currentPriceMob','currentPriceDesk','currentPriceCam'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){
+      el.textContent = fmt;
+      el.style.transition = 'transform .15s,color .15s';
+      el.style.transform = 'scale(1.15)';
+      el.style.color = '#ffe066';
+      setTimeout(function(){ el.style.transform='scale(1)'; el.style.color=''; }, 200);
+    }
+  });
+
+  // Update leader text
+  var lt = document.getElementById('leaderText');
+  if(lt) lt.innerHTML = '<span style="color:var(--cyan);font-weight:700;">Você</span> está na liderança 👑';
+
+  // Extend all timers by 30s
+  Object.values(bidTimerRefs).forEach(function(ref){
+    if(ref && typeof ref.addSecs === 'function') ref.addSecs(30);
+  });
+
+  // Add bid to chat feed
+  var bidMsg = '⚔️ Lance de <b>' + fmt + '</b>!';
+  var addBidMsg = function(feedId, maxItems){
+    var feed = document.getElementById(feedId);
+    if(!feed) return;
+    var cm = document.createElement('div');
+    cm.className = 'jl-cm';
+    cm.style.opacity = '0';
+    cm.style.transition = 'opacity .3s';
+    cm.innerHTML = '<div class="jlcm-av" style="background:linear-gradient(135deg,var(--pink),var(--purple));">VC</div>'
+      + '<div class="jlcm-txt" style="color:var(--gold);font-weight:700;"><span class="jlcm-u" style="color:var(--cyan);">você </span>' + bidMsg + '</div>';
+    feed.appendChild(cm);
+    setTimeout(function(){ cm.style.opacity = '1'; }, 20);
+    feed.scrollTop = feed.scrollHeight;
+    if(feed.children.length > (maxItems || 10)) feed.removeChild(feed.children[0]);
+  };
+  addBidMsg('liveFeed', 10);
+  addBidMsg('liveFeedDesk', 20);
+
+  // Flash animation
+  var f = document.getElementById('ifl');
+  if(f){
+    f.style.cssText = 'position:fixed;inset:0;z-index:999;background:rgba(255,45,120,.3);pointer-events:none;border-radius:0;animation:impactFlash .5s ease-out forwards;';
+    f.classList.remove('go');
+    void f.offsetWidth;
+    f.classList.add('go');
+    setTimeout(function(){ f.style.cssText = ''; }, 600);
+  }
+
+  // Toast notification
+  showBidToast(fmt);
+}
+
+function showBidToast(valor){
+  var existing = document.getElementById('bidToast');
+  if(existing) existing.remove();
+  var t = document.createElement('div');
+  t.id = 'bidToast';
+  t.style.cssText = 'position:fixed;bottom:160px;left:50%;transform:translateX(-50%);z-index:1000;'
+    + 'background:linear-gradient(135deg,rgba(30,5,60,.97),rgba(50,0,30,.97));'
+    + 'border:1px solid var(--pink);border-radius:16px;padding:14px 22px;'
+    + 'display:flex;align-items:center;gap:12px;'
+    + 'box-shadow:0 8px 32px rgba(255,45,120,.4);'
+    + 'animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) forwards;';
+  t.innerHTML = '<span style="font-size:22px;">⚔️</span>'
+    + '<div><div style="font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700;color:#fff;">Lance registrado!</div>'
+    + '<div style="font-size:12px;color:var(--gold);margin-top:2px;">Você está na liderança com ' + valor + '</div></div>'
+    + '<span style="font-size:18px;">👑</span>';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.animation = 'toastOut .3s ease-in forwards'; setTimeout(function(){ t.remove(); }, 350); }, 2800);
+}
+
+// ── impact flash (legacy) ──
 function impact(){
-  var f=document.getElementById('ifl');
-  if(!f) return;
-  f.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(255,45,120,.25);pointer-events:none;border-radius:0;animation:impactFlash .5s ease-out forwards;';
-  f.classList.remove('go');
-  void f.offsetWidth;
-  f.classList.add('go');
-  setTimeout(function(){ f.style.cssText=''; }, 600);
+  darLance();
 }
 
 // ── live chat ──
