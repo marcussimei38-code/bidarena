@@ -812,99 +812,175 @@ body{background:#04000D;font-family:'Noto Sans JP',sans-serif;overflow:hidden;he
   border-color:rgba(155,48,255,.55);color:var(--white);
   box-shadow:0 0 14px rgba(155,48,255,.22);}
 
-/* =============================================================
-   MOBILE RESPONSIVENESS
-   ============================================================= */
 
-/* Base: prevent horizontal scroll globally */
+
+
+/* ===========================================================
+   MOBILE RESPONSIVENESS — Complete Overhaul
+   =========================================================== */
+
+/* Global: prevent horizontal overflow */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { overflow-x: hidden; max-width: 100vw; }
-.sv { overflow-x: hidden; max-width: 100vw; }
+html, body { overflow-x: hidden; }
+.sv { overflow-x: hidden; }
 .scrl { overflow-x: hidden; }
+input, textarea, select { max-width: 100%; }
 
-/* Home topbar: hide overflow items on narrow screens */
-@media (max-width: 520px) {
-  .home-topnav { display: none !important; }
-  .huser-balance { display: none !important; }
-  .home-topbar { gap: 8px; padding: 0 14px; height: 52px; }
-  .home-search { min-width: 0; }
+/* ===========================================================
+   BOTTOM NAV (mobile-only)
+   =========================================================== */
+@media (max-width: 899px) {
+  /* Reposition bnav to bottom */
+  #bnav {
+    top: auto !important;
+    bottom: 0 !important;
+    height: auto !important;
+    padding: 4px 0 env(safe-area-inset-bottom, 6px) !important;
+    gap: 0 !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    justify-content: space-around !important;
+    border-bottom: none !important;
+    border-top: 1px solid rgba(155,48,255,.18) !important;
+  }
+  #bnav::-webkit-scrollbar { display: none; }
+
+  /* Hide logo from bottom bar */
+  .bnav-logo { display: none !important; }
+
+  /* Nav items: vertical icon+label */
+  .nb {
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-width: 52px !important;
+    max-width: 80px !important;
+    padding: 5px 2px !important;
+    gap: 2px !important;
+    border-radius: 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .nb-ico { font-size: 19px !important; }
+  .nb-lbl { font-size: 9px !important; letter-spacing: 0 !important; }
+
+  /* All screens: remove top padding (bnav is now bottom), add bottom padding */
+  .sv { padding-top: 0 !important; padding-bottom: 72px !important; }
+
+  /* s2 home has its own topbar, no extra top padding */
+  #s2 { padding-top: 0 !important; }
+
+  /* Screens with fixed bottom buy bars — override bottom padding */
+  #sProdDetail { padding-bottom: 0 !important; }
+  #sCheckout   { padding-bottom: 0 !important; }
+  #sOrderConfirm { padding-bottom: 72px !important; }
+
+  /* s3 live: full screen, no padding */
+  #s3 { padding-bottom: 0 !important; padding-top: 0 !important; }
+
+  /* Admin: bnav hidden, so no bottom padding needed */
+  #sAdmin { padding-bottom: 12px !important; }
 }
 
-/* Home hero: scale down on mobile */
+/* ===========================================================
+   HOME TOPBAR (mobile 2-row layout)
+   =========================================================== */
+@media (max-width: 899px) {
+  /* Topbar becomes 2 rows */
+  .home-topbar {
+    height: auto !important;
+    flex-wrap: wrap !important;
+    padding: 8px 14px 0 !important;
+    gap: 8px 10px !important;
+    align-items: center !important;
+  }
+
+  /* Row 1: search (full width) + avatar */
+  .home-search {
+    flex: 1 !important;
+    min-width: 0 !important;
+    order: 1 !important;
+  }
+
+  /* Balance: hide on mobile */
+  .huser-balance { display: none !important; }
+
+  /* Notification + avatar: compact */
+  .home-user-area {
+    order: 1 !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Row 2: category tabs — full width scrollable strip */
+  .home-topnav {
+    order: 2 !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    padding-bottom: 8px !important;
+    display: flex !important;
+  }
+
+  /* Tab items: slightly smaller */
+  .htnav-item {
+    padding: 5px 12px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ===========================================================
+   HOME CONTENT (mobile tweaks)
+   =========================================================== */
 @media (max-width: 440px) {
+  /* Hero */
   .hero-h1 { font-size: 22px !important; }
-  .hero-sub { font-size: 11px !important; max-width: 100% !important; }
+  .hero-sub { font-size: 11px !important; }
   .home-hero-content { padding: 18px 16px 16px !important; gap: 10px !important; }
   .hero-stat-val { font-size: 18px !important; }
-  .hero-cta-btn { padding: 11px 18px !important; font-size: 13px !important; width: 100%; }
-  .home-hero { margin: 12px 14px 12px !important; border-radius: 16px !important; }
+  .hero-cta-btn { padding: 10px 16px !important; font-size: 13px !important; }
+  .home-hero { margin: 10px 14px !important; }
+
+  /* Grids */
+  .live-grid { padding: 0 14px 16px !important; gap: 10px !important; }
+  .sh { padding: 0 14px 10px !important; }
+
+  /* Em alta */
+  .emalha-strip { padding: 0 14px 4px !important; }
+  .emalha-item { min-width: 138px !important; padding: 7px 10px !important; }
 }
 
-/* Live grid: 1 col on very narrow */
 @media (max-width: 360px) {
-  .live-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .live-grid { grid-template-columns: 1fr !important; }
 }
 
-/* Em alta strip items: smaller */
-@media (max-width: 440px) {
-  .emalha-item { min-width: 140px !important; padding: 7px 10px !important; }
-  .emalha-name { font-size: 11px !important; }
-}
-
-/* Admin tabs: shrink text on narrow */
+/* ===========================================================
+   ADMIN PANEL (mobile)
+   =========================================================== */
 @media (max-width: 480px) {
   .atb { padding: 10px 9px !important; font-size: 10px !important; }
-  .admin-tabs { padding: 0 4px !important; }
-}
-
-/* Admin pane padding */
-@media (max-width: 440px) {
   .admin-pane { padding: 14px !important; }
 }
 
-/* S3 Live: input bar on mobile */
+/* ===========================================================
+   LIVE SCREEN s3 (mobile)
+   =========================================================== */
 @media (max-width: 480px) {
   .jl-input-bar { padding: 0 8px 8px !important; }
-  .jl-bids-row { gap: 5px !important; }
+  .jl-bids-row { gap: 4px !important; }
   .jl-bq { font-size: 11px !important; padding: 9px 0 !important; }
-  .jl-main-bid { font-size: 12px !important; }
+  .jl-main-bid { font-size: 11px !important; }
 }
 
-/* Product card frame: smaller on narrow */
-@media (max-width: 380px) {
-  #pdCardFrame { width: 160px !important; }
-  #pdCardFrame > div { width: 160px !important; }
-}
-
-/* Bottom nav: safe area for notched phones */
-#bnav {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  height: calc(60px + env(safe-area-inset-bottom, 0px));
-}
-
-/* Tap target sizes */
-@media (max-width: 480px) {
-  .lgrid-btn { padding: 6px 12px !important; }
-  .htnav-item { padding: 6px 10px !important; font-size: 11px !important; }
-}
-
-/* Quick reply: touch scroll */
+/* ===========================================================
+   MISC
+   =========================================================== */
+/* Quick reply touch scroll */
 .jl-qr { -webkit-overflow-scrolling: touch; }
 
-/* Inputs never overflow */
-input, textarea, select, .finp { max-width: 100%; width: 100%; }
-
-/* Sections padding on narrow */
-@media (max-width: 440px) {
-  .sh { padding: 0 14px 10px !important; }
-  .live-grid { padding: 0 14px 20px !important; }
-  .emalha-strip { padding: 0 14px 4px !important; }
-  .home-hero { margin: 12px 14px 12px !important; }
-}
-
-/* Store grids */
+/* Store grids small screens */
 @media (max-width: 360px) {
-  .store-grid { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .store-grid { grid-template-columns: repeat(2,1fr) !important; }
 }
 
 </style>
@@ -4625,6 +4701,7 @@ function rejectApp(btn){
 function loginAndEnter(){
   var bnav=document.getElementById('bnav');
   if(bnav) bnav.style.display='flex';
+  setupMobileNav();
   // Simula vendedor aprovado para demonstrar "Minha Loja"
   isApprovedSeller = true;
   var nbMyStore = document.getElementById('nbMyStore');
@@ -4718,6 +4795,7 @@ function selMode(n){
 function finishOnboard(){
   var bnav=document.getElementById('bnav');
   if(bnav) bnav.style.display='flex';
+  setupMobileNav();
   go('s2'); setNav(0);
 }
 
@@ -4896,8 +4974,117 @@ setInterval(function(){
 },2800);
 
 // ── init ──
+
+// ═══════════════════════════════════════════════
+// MOBILE NAV SETUP
+// ═══════════════════════════════════════════════
+function isMobile(){ return window.innerWidth < 900; }
+
+function setupMobileNav(){
+  if(!isMobile()) return;
+  var bnav = document.getElementById('bnav');
+  if(!bnav) return;
+
+  // Move bnav to bottom
+  Object.assign(bnav.style, {
+    top: 'auto',
+    bottom: '0',
+    left: '0',
+    right: '0',
+    height: 'auto',
+    padding: '4px 0 ' + (window.CSS && CSS.supports('padding','env(safe-area-inset-bottom)') ? 'env(safe-area-inset-bottom,6px)' : '6px'),
+    gap: '0',
+    overflowX: 'auto',
+    justifyContent: 'space-around',
+    borderTop: '1px solid rgba(155,48,255,.18)',
+    borderBottom: 'none'
+  });
+
+  // Hide logo
+  var logo = bnav.querySelector('.bnav-logo');
+  if(logo) logo.style.display = 'none';
+
+  // Style nav items as vertical icon+label
+  bnav.querySelectorAll('.nb').forEach(function(nb){
+    Object.assign(nb.style, {
+      flexDirection: 'column',
+      flex: '1',
+      minWidth: '52px',
+      maxWidth: '80px',
+      padding: '5px 2px',
+      gap: '2px',
+      borderRadius: '8px',
+      alignItems: 'center',
+      justifyContent: 'center'
+    });
+    var ico = nb.querySelector('.nb-ico');
+    if(ico) Object.assign(ico.style, { fontSize: '20px' });
+    var lbl = nb.querySelector('.nb-lbl');
+    if(lbl) Object.assign(lbl.style, { fontSize: '9px', letterSpacing: '0' });
+  });
+
+  // Adjust all .sv: no top padding, add bottom padding for bottom bar
+  document.querySelectorAll('.sv').forEach(function(sv){
+    if(sv.id === 's3' || sv.id === 'sProdDetail' || sv.id === 'sCheckout' || sv.id === 'sAdmin') return;
+    sv.style.paddingTop = '0';
+    sv.style.paddingBottom = '72px';
+  });
+  // s3 live: fullscreen
+  var s3 = document.getElementById('s3');
+  if(s3){ s3.style.paddingTop = '0'; s3.style.paddingBottom = '0'; }
+
+  // Setup home topbar: make 2-row
+  setupHomeTopbar();
+}
+
+function setupHomeTopbar(){
+  if(!isMobile()) return;
+  var topbar = document.querySelector('.home-topbar');
+  if(!topbar) return;
+  Object.assign(topbar.style, {
+    height: 'auto',
+    flexWrap: 'wrap',
+    padding: '8px 14px 0',
+    gap: '8px 10px',
+    alignItems: 'center'
+  });
+  // Search: flex:1
+  var search = topbar.querySelector('.home-search');
+  if(search){ search.style.flex = '1'; search.style.minWidth = '0'; search.style.order = '1'; }
+  // User area: order 1 (same row as search)
+  var userArea = topbar.querySelector('.home-user-area');
+  if(userArea){ userArea.style.order = '1'; userArea.style.flexShrink = '0'; }
+  // Balance: hide
+  var balance = topbar.querySelector('.huser-balance');
+  if(balance) balance.style.display = 'none';
+  // Topnav: full-width second row
+  var topnav = topbar.querySelector('.home-topnav');
+  if(topnav){
+    Object.assign(topnav.style, {
+      order: '2',
+      width: '100%',
+      flexShrink: '0',
+      paddingBottom: '8px',
+      display: 'flex'
+    });
+  }
+  // Tab items: ensure scrollable
+  topbar.querySelectorAll('.htnav-item').forEach(function(item){
+    item.style.whiteSpace = 'nowrap';
+    item.style.flexShrink = '0';
+    item.style.padding = '5px 12px';
+    item.style.fontSize = '11px';
+  });
+}
+
+// Run on resize too
+window.addEventListener('resize', function(){
+  if(isMobile()) setupMobileNav();
+});
+
 window.addEventListener('DOMContentLoaded', function(){
-  routeByHash(); // admin via #admin ou ?admin na URL
+  routeByHash();
+  setTimeout(setupMobileNav, 100); // admin via #admin ou ?admin na URL
 
   var pn = document.getElementById('panNext');
   if(pn) pn.style.flexDirection='column';
