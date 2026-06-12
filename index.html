@@ -983,6 +983,72 @@ input, textarea, select { max-width: 100%; }
   .store-grid { grid-template-columns: repeat(2,1fr) !important; }
 }
 
+
+/* ═══════════════════════════════════════
+   MOBILE DRAWER (left sidebar)
+   ═══════════════════════════════════════ */
+
+/* Hamburger button — only on mobile */
+#drawerBtn {
+  display: none;
+  width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  background: rgba(155,48,255,.1);
+  border: 1px solid rgba(155,48,255,.25);
+  border-radius: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+@media (max-width: 899px) {
+  #drawerBtn { display: flex; }
+}
+
+/* Backdrop overlay */
+#drawerBackdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 800;
+  backdrop-filter: blur(2px);
+}
+#drawerBackdrop.open { display: block; }
+
+/* Drawer: transform the sidebar into a slide-in panel on mobile */
+@media (max-width: 899px) {
+  .home-sidebar-left {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important; bottom: 0 !important;
+    width: 280px !important;
+    z-index: 900 !important;
+    transform: translateX(-100%) !important;
+    transition: transform .28s cubic-bezier(.4,0,.2,1) !important;
+    overflow-y: auto !important;
+    background: rgba(8,2,24,.98) !important;
+    border-right: 1px solid rgba(155,48,255,.25) !important;
+    padding-top: 0 !important;
+  }
+  .home-sidebar-left.drawer-open {
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 32px rgba(0,0,0,.6) !important;
+  }
+
+  /* Close button inside drawer */
+  #drawerCloseBtn {
+    display: flex !important;
+    align-items: center; justify-content: flex-end;
+    padding: 14px 16px 8px;
+    cursor: pointer;
+    font-size: 22px;
+    color: rgba(255,255,255,.4);
+  }
+  #drawerCloseBtn:hover { color: var(--white); }
+}
+@media (min-width: 900px) {
+  #drawerCloseBtn { display: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -1234,6 +1300,8 @@ input, textarea, select { max-width: 100%; }
 
   <!-- ── TOP BAR ── -->
   <div class="home-topbar">
+    <!-- Hamburger (mobile only) -->
+    <div id="drawerBtn" onclick="openDrawer()">☰</div>
     <!-- Logo (mobile) / mobile menu icon (desktop hidden by sidebar) -->
     <div class="logo-mark" style="gap:8px;flex-shrink:0;margin-right:8px;">
       <svg width="22" height="26" viewBox="0 0 60 68" fill="none"><g filter="url(#BA-neon)"><rect x="4" y="4" width="52" height="60" rx="11" fill="rgba(255,45,120,0.06)" stroke="#FF2D78" stroke-width="3.5"/><g transform="rotate(-22,30,22)"><rect x="13" y="17" width="28" height="9" rx="3.5" fill="none" stroke="#FF2D78" stroke-width="2.5"/></g><line x1="36" y1="28" x2="43" y2="38" stroke="#FF2D78" stroke-width="2.8" stroke-linecap="round"/><circle cx="16" cy="14" r="2.5" fill="#FF2D78" opacity=".7"/><path d="M31 36 L23 48 L29 48 L27 56 L38 42 L32 42 Z" fill="#FF2D78"/></g></svg>
@@ -1284,10 +1352,13 @@ input, textarea, select { max-width: 100%; }
   </div>
 
   <!-- ── BODY ROW ── -->
+  <div id="drawerBackdrop" onclick="closeDrawer()"></div>
   <div class="home-body">
 
     <!-- ══ LEFT SIDEBAR ══ -->
     <div class="home-sidebar-left">
+      <!-- Close button (mobile) -->
+      <div id="drawerCloseBtn" onclick="closeDrawer()">✕</div>
       <!-- Logo desktop -->
       <div style="padding:16px 16px 8px;display:flex;align-items:center;gap:8px;">
         <svg width="22" height="26" viewBox="0 0 60 68" fill="none"><g filter="url(#BA-neon)"><rect x="4" y="4" width="52" height="60" rx="11" fill="rgba(255,45,120,0.06)" stroke="#FF2D78" stroke-width="3.5"/><g transform="rotate(-22,30,22)"><rect x="13" y="17" width="28" height="9" rx="3.5" fill="none" stroke="#FF2D78" stroke-width="2.5"/></g><line x1="36" y1="28" x2="43" y2="38" stroke="#FF2D78" stroke-width="2.8" stroke-linecap="round"/><circle cx="16" cy="14" r="2.5" fill="#FF2D78" opacity=".7"/><path d="M31 36 L23 48 L29 48 L27 56 L38 42 L32 42 Z" fill="#FF2D78"/></g></svg>
@@ -4108,6 +4179,23 @@ function submitApply(){
 }
 
 // ══ SIDEBAR NAVIGATION ══
+
+// ── Mobile Drawer ──
+function openDrawer(){
+  var sb = document.querySelector('.home-sidebar-left');
+  var bd = document.getElementById('drawerBackdrop');
+  if(sb) sb.classList.add('drawer-open');
+  if(bd) bd.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer(){
+  var sb = document.querySelector('.home-sidebar-left');
+  var bd = document.getElementById('drawerBackdrop');
+  if(sb) sb.classList.remove('drawer-open');
+  if(bd) bd.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 function sidebarNav(el, key){
   // highlight sidebar item
   document.querySelectorAll('.hsl-item').forEach(function(i){ i.classList.remove('on'); });
@@ -4129,6 +4217,7 @@ function sidebarNav(el, key){
     'futebol':    function(){ go('s2'); setTimeout(function(){ setHomeTabById('tab-futebol'); },0); },
   };
   if(routes[key]) routes[key]();
+  if(window.innerWidth < 900) closeDrawer();
 }
 
 function setHomeTabById(tabId){
